@@ -23,35 +23,42 @@ function heightToGeopotential(z)
 end
 
 # These functions will likely get more complicated when I integrate information from weather data, but for now they just use ISA data
-function getAirDensity(z)
-    return ISAdata(z)[1]
+function getAirParams(u, p, t)
+    z, _ = u
+    return ISAdata(z)
 end
 
-function getAirPressure(z)
-    return ISAdata(z)[2]
+function getAirDensity(u, p, t)
+    return getAirParams(u, p, t)[1]
 end
 
-function getAirTemp(z)
-    return ISAdata(z)[3]
+function getAirPressure(u, p, t)
+    return getAirParams(u, p, t)[2]
 end
 
-function getGasViscosity(z)
-    return ISAdata(z)[4]
+function getAirTemp(u, p, t)
+    return getAirParams(u, p, t)[3]
 end
 
-function getGasDensity(z, mGas)
-    V = getBalloonVolume(z, mGas)
+function getGasViscosity(u, p, t)
+    return getAirParams(u, p, t)[4]
+end
+
+function getGasDensity(u, p, t)
+    # Computes the density of the balloon lift gas
+    V = getBalloonVolume(u, p, t)
     return mGas/V
 end
 
-function getBalloonVolume(z, mGas)
+function getBalloonVolume(u, p, t)
     # For now, we're assuming a lot about the balloon:
     # 1) The internal temperature is uniform, and the same as the external temperature
     # 2) The pressure is the same as the external pressure
     # 3) The lift gas follows the ideal gas law
+    z, vz = u
 
-    P = getAirPressure(z)
-    T = getAirTemp(z)
+    P = getAirPressure(u, p, t)
+    T = getAirTemp(u, p, t)
     V = mGas*RSpec*T/P
     return V
 end
@@ -61,44 +68,45 @@ function getBalloonRadius(vBalloon)
     return (vBalloon*(3/(4*pi)))^(1/3)
 end
 
-function getProjectedArea(x, p, t)
-    z, vz = x
+function getProjectedArea(u, p, t)
+    z, vz = u
     isBurst = p["isBurst"]
     mGas = p["mGas"]
     if isBurst
-        area = 1.0
+        area = 2.0
     else
-        radius = getBalloonRadius(getBalloonVolume(z, mGas))
+        radius = getBalloonRadius(getBalloonVolume(u, p, t))
         area = pi*radius^2
     end
     return area
 end
 
-function force_buoyancy(x, p, t)
-    z, vz = x
+function force_buoyancy(u, p, t)
+    z, vz = u
     mGas = p["mGas"]
     isBurst = p["isBurst"]
 
     if isBurst
         fBuoyant = 0.0
     else
-        V = getBalloonVolume(z, mGas)
-        ρAir = getAirDensity(z)
+        V = getBalloonVolume(u, p, t)
+        ρAir = getAirDensity(u, p, t)
         fBuoyant = V*ρAir*g
     end
     return fBuoyant
 end
 
-function force_drag(x, p, t)
-    z, vz = x
-    mGas = p["mGas"]
-
-    ρAir = getAirDensity(z)
-    V = getBalloonVolume(z, mGas)
-    A = getProjectedArea(x, p, t)
-    R = getBalloonRadius(V)
-    Re = getReynoldsNumber(2*R, vz, z)
-    Cd = getDragCoeff(Re)
+function force_drag(u, p, t)
+    z, vz = u
+    ρAir = getAirDensity(u, p, t)
+    A = getProjectedArea(u, p, t)
+    Re = getReynoldsNumber(u, p, t)
+    # If the balloon has burst, the drag coefficient is determined by the parachute (mostly)
+    if p["isBurst"]
+        Cd = 0.8
+    else
+        Cd = getDragCoeff(Re)
+    end
 
     fDrag = -(1/2)*ρAir*A*Cd*(vz^2)*sign(vz)
     return fDrag
@@ -112,9 +120,12 @@ function getReynoldsNumber(L, v, μ, ρ)
     return ρ*v*L/μ
 end
 
-function getReynoldsNumber(L, v, z)
-    ρ, P, T, μ = ISAdata(z)
-    return getReynoldsNumber(L, v, μ, ρ)
+function getReynoldsNumber(u, p, t)
+    z, vz = u
+    V = getBalloonVolume(u, p, t)
+    D = 2*getBalloonRadius(V)
+    ρ, P, T, μ = getAirParams(u, p, t)
+    return getReynoldsNumber(D, vz, μ, ρ)
 end
 
 function getDragCoeff(Re)
@@ -169,27 +180,27 @@ mPay = 0.8 # kg - mass of the payload
 
 g = 9.81 # m/s^2
 
-function dFun(x, p, t)
-    z, vz = x
-    fDrag = force_drag(x, p, t)
-    fBuoyant = force_buoyancy(x, p, t)
+function dFun(u, p, t)
+    z, vz = u
+    fDrag = force_drag(u, p, t)
+    fBuoyant = force_buoyancy(u, p, t)
     fGrav = force_gravity(mBal, mGas, mPay, g)
     az = (fDrag + fBuoyant + fGrav)/(mGas + mBal + mPay)
     return [vz, az]
 end
 
-# Set up the condition that causes the balloon to burst when it becomes too large
+# Set up the callback that causes the balloon to burst when it becomes too large
 burstDiameter = 9.45 # m
-function cb_burst_condition(x, t, integrator)
+function cb_burst_condition(u, t, integrator)
     isBurst = integrator.p["isBurst"]
     # Checking to see if callback has returned true before. If so, this prevents it from running again
     # https://discourse.julialang.org/t/differentialequations-callback-which-is-only-triggered-the-first-time-condition-is-satisfied/70216/3
     if isBurst
-        return 1.0
+        return 2.0
     else
         burstDiameter = integrator.p["burstDiameter"]
-        z, vZ = x
-        V = getBalloonVolume(z, mGas)
+        z, vZ = u
+        V = getBalloonVolume(u, integrator.p, t)
         R = getBalloonRadius(V)
         balloonDiameter = 2*R
         return burstDiameter - balloonDiameter
@@ -200,8 +211,8 @@ function cb_burst_affect!(integrator)
 end
 
 # Callback to terminate the simulation at zero altitude
-function cb_negativeAltitude_condition(x, t, integrator)
-    z, vz = x
+function cb_negativeAltitude_condition(u, t, integrator)
+    z, vz = u
     return z
 end 
 
@@ -214,14 +225,14 @@ cb_negativeAltitude = ContinuousCallback(cb_negativeAltitude_condition, nothing,
 cb_all = CallbackSet(cb_burst, cb_negativeAltitude)
 zInitial = 1.0
 zDotInitial = 0.0
-x0 = [zInitial, zDotInitial]
+u0 = [zInitial, zDotInitial]
 tSpan = [0.0, 10000.0]
 isBurst = false
 
 p = Dict("isBurst"=>isBurst, "mBal"=>mBal, "mPay"=>mPay, "mGas"=>mGas, "burstDiameter"=>burstDiameter)
 
 
-prob = ODEProblem(dFun, x0, tSpan, p, callback=cb_all)
+prob = ODEProblem(dFun, u0, tSpan, p, callback=cb_all)
 sol = solve(prob)
 
 plot(sol)
