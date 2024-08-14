@@ -30,11 +30,8 @@ loc2glob = LLAfromENU(launchPoint, grs80) # we use grs80 because that's what the
 glob2loc = inv(loc2glob)
 
 
-
-
-
 function importSimData(simFolder, simFile)
-    df = DataFrame(CSV.File(simFolder*simFile))
+    df = DataFrame(CSV.File(joinpath(simFolder,simFile)))
 
     rx = df[!, :rx]
     ry = df[!, :ry]

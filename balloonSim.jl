@@ -14,6 +14,8 @@ using ComponentArrays
 using DataFrames
 using CSV
 
+using BenchmarkTools
+
 
 
 
@@ -39,8 +41,6 @@ function getAirParams(u, p, t)
     rx, ry, rz, vx, vy, vz, mGas, TGas = u
     return ISAdata(rz) 
 end
-
-
 
 function getAirDensity(u, p, t)
     return getAirParams(u, p, t)[1]
@@ -132,7 +132,7 @@ function getWindSpeed(u, p, t)
     rx, ry, rz, vx, vy, vz, mGas, TGas = u
     h = 10000.0
     f = 3600.0
-    return [10.0, 0.0] #[sin(rz/h), cos(rz/h)] + 0.1*[sin(t/f), sin(t/f)]
+    return  [sin(rz/h), cos(rz/h)] + 10.1*[sin(t/f), sin(t/f)] #[10.0, 0.0]
 end
 
 function getReynoldsNumber(L, v, μ, ρ)
