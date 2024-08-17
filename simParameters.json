@@ -1,0 +1,6 @@
+{
+    "pos": [0.0, 0.0, 1.0],
+    "vel": [0.0, 0.0, 0.0],
+    "initial time": 0.0,
+    "max sim duration": 10000.0
+}
