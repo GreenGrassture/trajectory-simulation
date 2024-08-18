@@ -1,3 +1,10 @@
+# Until I expand the codebase into a proper module, this is where all the code loading happens.
+# Scripts that actually *do* stuff should include this file. That way all the code loading and compilation isn't performed
+# repeatedly.
+
+
+
+
 using Profile
 using PProf
 

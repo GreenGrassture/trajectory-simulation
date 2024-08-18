@@ -21,6 +21,7 @@ using Mux
 #using FileIO
 
 function convertDatetimesToTimeSinceLaunch(datetimes)
+    # Date.value is in milliseconds
     timeSinceLaunch = (Dates.value.(datetimes .- datetimes[1]))./1000.0
     return timeSinceLaunch
 end
@@ -33,7 +34,7 @@ function importGeography(geoDir)
     return geoBig
 end
 
-function plotTrajectories(trajectoryDfs)
+function plotTrajectories(trajectoryDfs, geoBig)
     GLMakie.activate!
     set_theme!(backgroundcolor = :lightskyblue2)
     aspect=(1, 1, 1)
@@ -44,14 +45,11 @@ function plotTrajectories(trajectoryDfs)
     xlims!(ax1, (-124, -119))
     ylims!(ax1, (36, 39))
     zlims!(ax1, (-10.0, 80000.0))
-    #contourf!(ax, geoSmall, colormap=:batlow)
     surface!(ax1, geoBig, colormap=:oleron, nan_color=:red, colorrange=(-1499,1500))
-
-    #surface!(ax1, rasN38W122, colormap=:winter, nan_color=:red, colorrange=(-1,1500))
-    #surface!(ax1, rasN38W123, colormap=:winter, nan_color=:red, colorrange=(-1,1500))
     for df in trajectoryDfs
-        lines!(ax1, df[:lons], df[:lats], df[:alts], 
-               color=convertDatetimesToTimeSinceLaunch(df[:datetime]), linewidth=2, colormap=:lajolla)
+        timeSeconds = convertDatetimesToTimeSinceLaunch(df[!,:datetime])
+        lines!(ax1, df[!,:lon], df[!,:lat], df[!,:alt], 
+               color=timeSeconds, linewidth=2, colormap=:lajolla)
     end
     #cam = Makie.Camera3D(ax1.scene, projectiontype = Makie.Perspective, reset = Keyboard.left_control, center=false, reposition_button=Keyboard.left_alt)
     return fig

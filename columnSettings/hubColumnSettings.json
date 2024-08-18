@@ -1,0 +1,331 @@
+{
+    "@timestamp": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "@version": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "sonde",
+        "missingVals": null
+    },
+    "alt": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "batt": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "burst_timer": {
+        "dtype": "int64",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "checksum": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "comment": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "datetime": {
+        "dtype": "str",
+        "keep": true,
+        "proc": "datetime",
+        "kind": "data",
+        "missingVals": null
+    },
+    "frame": {
+        "dtype": "int64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "frequency": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "comm",
+        "missingVals": null
+    },
+    "heading": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "humidity": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": [-1.0]
+    },
+    "lat": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "launch_site": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "data",
+        "missingVals": null
+    },
+    "launch_site_range_estimate": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "log_date": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "lon": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "manufacturer": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "sonde",
+        "missingVals": null
+    },
+    "position": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "pressure": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "ref_datetime": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "ref_position": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "rs41_mainboard": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "data",
+        "missingVals": null
+    },
+    "rs41_mainboard_fw": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "data",
+        "missingVals": null
+    },
+    "rs41_subframe": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "rssi": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "comm",
+        "missingVals": null
+    },
+    "sats": {
+        "dtype": "int64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "serial": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "sonde",
+        "missingVals": null
+    },
+    "snr": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "comm",
+        "missingVals": null
+    },
+    "software_name": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "uploader",
+        "missingVals": null
+    },
+    "software_version": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "uploader",
+        "missingVals": null
+    },
+    "subtype": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "sonde",
+        "missingVals": null
+    },
+    "temp": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": [-273.0]
+    },
+    "time": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "comm",
+        "missingVals": null
+    },
+    "time_received": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "datetime",
+        "kind": "comm",
+        "missingVals": null
+    },
+    "time_uploaded": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "datetime",
+        "kind": "comm",
+        "missingVals": null
+    },
+    "tx_frequency": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "comm",
+        "missingVals": null
+    },
+    "type": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "sonde",
+        "missingVals": null
+    },
+    "upload_time_delta": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "comm",
+        "missingVals": null
+    },
+    "uploader_alt": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "uploader",
+        "missingVals": null
+    },
+    "uploader_antenna": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "uploader",
+        "missingVals": null
+    },
+    "uploader_callsign": {
+        "dtype": "str",
+        "keep": true,
+        "proc": null,
+        "kind": "uploader",
+        "missingVals": null
+    },
+    "uploader_position": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "uploader",
+        "missingVals": null
+    },
+    "user-agent": {
+        "dtype": "str",
+        "keep": false,
+        "proc": null,
+        "kind": "comm",
+        "missingVals": null
+    },
+    "vel_h": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "vel_v": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "version": {
+        "dtype": "str",
+        "keep": false,
+        "proc": "categorical",
+        "kind": "sonde",
+        "missingVals": null
+    }
+}

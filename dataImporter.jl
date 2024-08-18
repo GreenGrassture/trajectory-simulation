@@ -15,7 +15,7 @@ using GZip
 using BenchmarkTools
 using GLMakie
 
-function getColumnSettings(colSettingsPath)
+function getColumnSettings(colSettingPath)
     return parseColumnSettings(JSON.parsefile(colSettingPath))
 end
 
@@ -166,7 +166,7 @@ end
 
 jsonPath = "./sondehub/W1621037.json.gz"
 csvPath = "./sondehub/W1621037_testSave.csv"
-colSettingPath = joinpath(cd(pwd, ".."), "columnSettings.json")
+colSettingPath = joinpath([pwd(), "columnSettings", "hubColumnSettings.json"])
 colSettings = getColumnSettings(colSettingPath)
 
 df1 = dataframeFromJson(jsonPath, colSettings)

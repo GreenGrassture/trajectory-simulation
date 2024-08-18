@@ -1,0 +1,81 @@
+{
+    "alt": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "datetime": {
+        "dtype": "str",
+        "keep": true,
+        "proc": "datetime",
+        "kind": "data",
+        "missingVals": null
+    },
+    "humidity": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": [
+            -1.0
+        ]
+    },
+    "lat": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "lon": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "mGas": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "pressure": {
+        "dtype": "float64",
+        "keep": false,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "TGas": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "vx": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "vy": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    },
+    "vz": {
+        "dtype": "float64",
+        "keep": true,
+        "proc": null,
+        "kind": "data",
+        "missingVals": null
+    }
+}
