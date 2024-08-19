@@ -15,8 +15,13 @@ hubFile = "W1621037_testSave.csv" #"V4630041.csv"
 hubPath = joinpath(hubFolder, hubFile)
 dfHub = dataframeFromCsv(hubPath, hubColSettingPath)
 
+dfs = [dfSim, dfHub]
+
 geoDir = "geography/one arc sec/"
 geoBig = importGeography(geoDir)
 
-fig = plotTrajectories([dfSim, dfHub], geoBig)
-display(fig)
+fig3d = plotTrajectories3D(dfs, geoBig)
+#display(fig3d)
+
+fig2d = plotTrajectories2D(dfs);
+display(fig3d)

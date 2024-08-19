@@ -10,10 +10,11 @@ using CSV
 using JSONTables
 using JSON
 using GZip
+using AWSS3
 
 # Testing
 using BenchmarkTools
-using GLMakie
+#using VSCode: profview
 
 function getColumnSettings(colSettingPath)
     return parseColumnSettings(JSON.parsefile(colSettingPath))
@@ -102,8 +103,10 @@ function deduplicateUsingDataCols(df, colSettings)
         transform!(framedf, Cols(:uploader_callsign) .=> (x -> String31("ZZZZZZ")) => identity)
         push!(deduplicatedFrameRows, framedf[1, DataFrames.All()])
     end
+    # When we combine the dfs they will not be in frame order overall
     df = vcat(singleEntryFrames, DataFrame(deduplicatedFrameRows))
-    df = sort(df, :frame)
+    # Using MergeSort because there are basically two sorted sub-lists
+    df = sort(df, :frame, alg=MergeSort)
     return df
 end
 

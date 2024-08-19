@@ -11,10 +11,10 @@ launchParamPath = "launchParameters.json"
 simParamPath = "simParameters.json"
 
 
-launchParams = getLaunchParameters(launchParamPath)
-simParams = getSimParameters(simParamPath)
+launchParams = getLaunchParameters(launchParamPath);
+simParams = getSimParameters(simParamPath);
 
-prob = constructSim(launchParams, simParams)
+prob = constructSim(launchParams, simParams);
 prob, sol, df = runSim(prob);
-saveSim(prob, sol, df)
+saveSim(prob, sol, df);
 

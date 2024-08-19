@@ -68,7 +68,7 @@ function getBalloonVolume(u, p, t)
     # 1) The internal temperature is uniform, and the same as the external temperature
     # 2) The pressure is the same as the external pressure
     # 3) The lift gas follows the ideal gas law
-    rx, ry, rz, vx, vy, vz, mGas, TGas = u
+    @unpack mGas, TGas = u
     global R
     P = getAirPressure(u, p, t)
     T = getAirTemp(u, p, t)
@@ -129,7 +129,7 @@ function force_gravity(mBal, mGas, mPay, g)
 end
 
 function getWindSpeed(u, p, t)
-    rx, ry, rz, vx, vy, vz, mGas, TGas = u
+    @unpack rz = u
     h = 10000.0
     f = 3600.0
     return  [sin(rz/h), cos(rz/h)] + 10.1*[sin(t/f), sin(t/f)] #[10.0, 0.0]
@@ -140,7 +140,7 @@ function getReynoldsNumber(L, v, μ, ρ)
 end
 
 function getReynoldsNumber(u, p, t)
-    rx, ry, rz, vx, vy, vz, mGas, TGas = u
+    @unpack vz = u
     V = getBalloonVolume(u, p, t)
     D = 2*getBalloonRadius(V)
     ρ, P, T, μ = getAirParams(u, p, t)
@@ -171,7 +171,7 @@ function cb_burst_condition(u, t, integrator)
         return 2.0
     else
         burstDiameter = integrator.p[:burstDiameter]
-        rx, ry, rz, vx, vy, vz, mGas, TGas = u
+        #rx, ry, rz, vx, vy, vz, mGas, TGas = u
         V = getBalloonVolume(u, integrator.p, t)
         R = getBalloonRadius(V)
         balloonDiameter = 2*R
@@ -191,7 +191,7 @@ end
 
 # Callback to terminate the simulation at zero altitude
 function cb_negativeAltitude_condition(u, t, integrator)
-    rx, ry, rz, vx, vy, vz, mGas, TGas = u
+    @unpack rz = u
     return rz
 end 
 
@@ -302,7 +302,7 @@ function constructSim(launchParams, simParams)
     # Set up the callback that causes the balloon to burst when it becomes too large
     burstDiameter = launchParams["burst diameter"] # m
 
-    u0 = ComponentArray(rx=rx0, ry=ry0, rz=rz0, vx=vx0, vy=vy0, vz=vz0, mGas=mGas0, TGas=T0)
+    u0 = ComponentArray{Float64}(rx=rx0, ry=ry0, rz=rz0, vx=vx0, vy=vy0, vz=vz0, mGas=mGas0, TGas=T0)
 
     # Initial and final times in seconds
     t0::Float64 = simParams["initial time"]
@@ -323,8 +323,8 @@ function constructSim(launchParams, simParams)
     # Turn the dict into a namedtuple so it is immutable
     p = NamedTuple(pairs(p))
 
-    cb_burst = ContinuousCallback(cb_burst_condition, cb_burst_affect!)
-    cb_negativeAltitude = ContinuousCallback(cb_negativeAltitude_condition, nothing, cb_negativeAltitude_affect!)
+    cb_burst = ContinuousCallback(cb_burst_condition, cb_burst_affect!, interp_points=10)
+    cb_negativeAltitude = ContinuousCallback(cb_negativeAltitude_condition, nothing, cb_negativeAltitude_affect!, interp_points=10)
     cb_all = CallbackSet(cb_burst, cb_negativeAltitude)
 
     # Attach symbolic names 
@@ -334,7 +334,7 @@ function constructSim(launchParams, simParams)
 end
 
 function runSim(prob)
-    sol = solve(prob)
+    sol = solve(prob, Tsit5())
     # Since we atteched the symbolic names, we can just transform this into a dataframe with the appropriate column names like this:
     df = DataFrame(sol)
     # Convert to DateTim
@@ -356,4 +356,18 @@ function saveSim(prob, sol, df)
     simFile = "sol.csv"
     CSV.write(joinpath(simFolder,simFile), df, dateformat=dateformat"yyyy-mm-ddTHH:MM:SS.ssssss")
     #idxRz = label2index(u0, "rz")
+    return nothing
 end
+
+# Contains physically "real" information like launch location, time, type of gas. Things that would apply to a real launch
+launchParamPath = "launchParameters.json"
+# Contains information pertaining to the simulation itself like maximum simulation time, initial position in simulation coordinates
+simParamPath = "simParameters.json"
+
+launchParams = getLaunchParameters(launchParamPath);
+simParams = getSimParameters(simParamPath);
+
+testProb = constructSim(launchParams, simParams);
+testProb = remake(testProb; tspan=(0.0, 1.0));
+
+testProb, sol, df = runSim(prob);

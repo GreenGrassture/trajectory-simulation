@@ -34,7 +34,7 @@ function importGeography(geoDir)
     return geoBig
 end
 
-function plotTrajectories(trajectoryDfs, geoBig)
+function plotTrajectories3D(trajectoryDfs, geoBig)
     GLMakie.activate!
     set_theme!(backgroundcolor = :lightskyblue2)
     aspect=(1, 1, 1)
@@ -45,7 +45,7 @@ function plotTrajectories(trajectoryDfs, geoBig)
     xlims!(ax1, (-124, -119))
     ylims!(ax1, (36, 39))
     zlims!(ax1, (-10.0, 80000.0))
-    surface!(ax1, geoBig, colormap=:oleron, nan_color=:red, colorrange=(-1499,1500))
+    surface!(ax1, geoBig, colormap=:oleron, colorrange=(-1499,1500), nan_color=:red) 
     for df in trajectoryDfs
         timeSeconds = convertDatetimesToTimeSinceLaunch(df[!,:datetime])
         lines!(ax1, df[!,:lon], df[!,:lat], df[!,:alt], 
@@ -54,3 +54,18 @@ function plotTrajectories(trajectoryDfs, geoBig)
     #cam = Makie.Camera3D(ax1.scene, projectiontype = Makie.Perspective, reset = Keyboard.left_control, center=false, reposition_button=Keyboard.left_alt)
     return fig
 end
+
+function plotTrajectories2D(trajectoryDfs)
+    fig = Figure(; size=(800,800))
+    ax1 = Makie.Axis(fig[1,1])
+    ax2 = Makie.Axis(fig[1,2])
+    for df in trajectoryDfs
+        timeSeconds = convertDatetimesToTimeSinceLaunch(df[!,:datetime])
+        # plot the x and y motion
+        lines!(ax1, df[!,:lon], df[!,:lat])
+        # plot the z motion
+        lines!(ax2, timeSeconds, df[!,:alt])
+    end
+    return fig
+end
+
